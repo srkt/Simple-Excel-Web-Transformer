@@ -20,6 +20,24 @@ The app runs from `excel-transformer.html`. No server is required for normal use
 
 Use `Reupload File` to start over with a new source file.
 
+## Optional Python Server
+
+The app can be opened directly, but you can also serve the folder with Python for simple local use.
+
+From the project folder, run:
+
+```powershell
+python -m http.server 8000
+```
+
+Then open:
+
+```text
+http://localhost:8000/excel-transformer.html
+```
+
+Stop the server with `Ctrl+C` in the terminal.
+
 ## Features
 
 - Upload `.xlsx`, `.xls`, and `.csv` files.
