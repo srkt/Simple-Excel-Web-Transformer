@@ -1,28 +1,14 @@
-# Photon-Flow
+# Simple Excel Web Transformer
 
-Photon-Flow is a web-based ETL tool built to make data preparation simple and super fast.
+Simple Excel Web Transformer is a single-file, browser-based tool for transforming Excel and CSV files. It can map columns, filter rows, pivot, unpivot, aggregate, preview results, export output files, and save reusable transformation configs.
 
-The project is moving beyond a single Excel utility into a broader extraction, transformation, and loading workflow. The current working step is the Excel Transformer module, which handles browser-based Excel and CSV reshaping.
-
-## Excel Transformer
-
-### Current ETL Step
-
-Excel Transformer is the first transformation step in Photon-Flow. It can map columns, filter rows, pivot, unpivot, aggregate, preview results, export output files, and save reusable transformation configs.
-
-The Excel Transformer interface should be treated as a focused step inside the larger Photon-Flow workflow. Where possible, its sections should be minimizable so users can collapse completed areas and see only the active steps, similar to an accordion.
-
-The app runs from one file: `excel-transformer.html`.
-
-No server is required for normal use. File parsing, transformations, preview, exports, and saved configs run in the browser.
-
----
+The app runs from `excel-transformer.html`. No server is required for normal use. File parsing, transformation, preview, export, and saved configs all run in the browser.
 
 ## Quick Start
 
 1. Open `excel-transformer.html` in a modern browser.
 2. Upload an `.xlsx`, `.xls`, or `.csv` file.
-3. Choose the operation type:
+3. Choose an operation type:
    - `Regular transform`
    - `Pivot`
    - `Unpivot`
@@ -32,17 +18,27 @@ No server is required for normal use. File parsing, transformations, preview, ex
 6. Export the output file.
 7. After export, choose whether to save or download the transformation config.
 
-Use `Reupload File` at the top of the app to start over with a new source file without returning to the initial screen.
+Use `Reupload File` to start over with a new source file.
 
-As Photon-Flow grows, this Excel Transformer flow should remain one compact step in the larger ETL process rather than the whole product surface.
+## Features
 
----
+- Upload `.xlsx`, `.xls`, and `.csv` files.
+- Rename, reorder, keep, or drop columns.
+- Add formula, constant, and split-derived columns.
+- Apply data types, transforms, and output formats.
+- Filter rows using field-aware operators.
+- Run pivot, unpivot, and aggregate operations.
+- Preview transformed rows before export.
+- Export transformed data as `.xlsx` and `.csv`.
+- Save configs in browser `localStorage`.
+- Download and reload config JSON files.
+- Use Column Script and Row Script for advanced transformations.
 
 ## Deployment
 
 ### Local or Network Drive
 
-Double-click `excel-transformer.html` and open it in Edge, Chrome, or Firefox.
+Double-click `excel-transformer.html` and open it in Microsoft Edge, Google Chrome, or Mozilla Firefox.
 
 ### IIS
 
@@ -56,37 +52,31 @@ Double-click `excel-transformer.html` and open it in Edge, Chrome, or Firefox.
 
 All processing happens in the browser. Source files are not uploaded to a backend.
 
----
-
 ## Config JSON Workflow
 
-Transformation settings can be saved as a config JSON so the same rules can be reused later.
+Transformation settings can be saved as config JSON so the same rules can be reused later.
 
 Supported config actions:
 
-- Save config to browser `localStorage`.
-- Download config as a `.json` file.
+- Save a config to browser `localStorage`.
+- Download a config as a `.json` file.
 - Load a saved local config.
 - Drop or browse for a config JSON file.
-- Validate the config against the uploaded data file before applying it.
+- Validate a config against the uploaded data file before applying it.
 
 The app checks whether referenced source columns exist in the uploaded file. If there are mismatches, it reports the discrepancies before applying the config.
 
-Configs can also preserve column-script logic. When a config was saved after applying a Column Script, the app stores that script and reruns it against the newly uploaded file's current headers before validating and restoring the mapping. Saved edits for old source columns are kept when those columns still exist. If an old source column is no longer present, the stale saved definition is overridden by the script-generated mapping for the new headers.
+Configs can preserve Column Script logic. When a config is saved after applying a Column Script, the app stores that script and reruns it against the newly uploaded file's current headers before validating and restoring the mapping. Saved edits for old source columns are kept when those columns still exist. If an old source column is no longer present, the stale saved definition is overridden by the script-generated mapping for the new headers.
 
-For example, if a column script renames headers that match a date or year/month pattern, a later file can contain a new set of matching period columns and the config can rebuild the mapping from the new headers.
+For example, if a Column Script renames headers that match a date or year/month pattern, a later file can contain a new set of matching period columns and the config can rebuild the mapping from the new headers.
 
 The app only asks whether to save or export an updated config after an output export. Previewing does not trigger the config-save prompt.
 
-Saved configs are browser-local for now. They are not shared between users, machines, or browsers.
-
----
+Saved configs are browser-local. They are not shared between users, machines, or browsers.
 
 ## Operation Modes
 
 Only the UI for the selected operation is shown. For example, Pivot hides regular transform and Unpivot controls; Unpivot hides Pivot and regular transform controls.
-
-For the Photon-Flow experience, operation sections should be collapsible/minimizable when practical. The goal is to keep the page fast to scan: users should be able to collapse setup, mapping, filter, preview, and export areas once each step is complete.
 
 ### Regular Transform
 
@@ -99,9 +89,9 @@ Main capabilities:
 - Keep selected columns or exclude columns from output.
 - Add formula, constant, and split-derived columns.
 - Change data type and formatting.
-- Apply data-type-specific transforms and formats. Text fields show text cleanup/casing options, number fields show numeric transforms/formats, and date fields show date extraction/format options.
+- Apply data-type-specific transforms and formats.
 - Apply bulk rename, prefix, suffix, find/replace, and bulk settings.
-- Apply data type, transform, and format to multiple selected fields at once. In the bulk settings modal, each setting can be enabled independently, so users can apply only a format, only a data type, or a combined update to the selected columns.
+- Apply data type, transform, and format to multiple selected fields at once.
 - Use undo and reset while working.
 
 ### Data Types, Transforms, and Formats
@@ -219,16 +209,18 @@ Use Pivot when rows need to be summarized across one or more pivot dimensions.
 Typical setup:
 
 - Select grouping fields.
-- Select the pivot field.
+- Select one or more pivot columns.
 - Select one or more value fields.
-- Choose aggregation behavior.
+- Choose aggregation behavior for each value field.
 - Preview the pivoted output before export.
+
+Pivot runs after filtering, mapping, formulas, transforms, and any active Row Script.
 
 ### Unpivot
 
 Use Unpivot when wide columns need to be converted into rows.
 
-Checking Unpivot opens a centered draggable settings popup. Use `Settings` to reopen the current configuration and `Clear` to remove the active unpivot setup.
+Checking Unpivot opens a draggable settings popup. Use `Settings` to reopen the current configuration and `Clear` to remove the active unpivot setup.
 
 Unpivot types:
 
@@ -324,8 +316,6 @@ Typical setup:
 - Choose aggregation functions.
 - Preview and export the summarized output.
 
----
-
 ## Scripts
 
 The app includes JavaScript scripting for advanced cases.
@@ -339,7 +329,7 @@ When a transformation config is saved after a Column Script is applied, the scri
 Example:
 
 ```js
-colDefs.forEach(d => {
+colDefs.forEach((d) => {
   if (/tmp|test/i.test(d.srcCol)) d.dropped = true;
 });
 ```
@@ -361,15 +351,11 @@ function transformRow(row) {
 
 Scripts are saved in browser `localStorage` and remain local to that browser.
 
----
-
 ## Preview and Export
 
 Preview shows transformed rows before writing a file. Use it to verify column names, values, filters, pivot output, unpivot output, and aggregate output.
 
-Export downloads the transformed result. After export, the app can ask whether to save or download the latest transformation config.
-
----
+Export downloads the transformed result as `.xlsx` and `.csv`. After export, the app can ask whether to save or download the latest transformation config.
 
 ## Processing Notes
 
@@ -380,8 +366,6 @@ Export downloads the transformed result. After export, the app can ask whether t
 - Browser local storage is not a database and is not shared across devices.
 - For future database-backed configs, the current config JSON can be used as the portable format.
 
----
-
 ## Browser Compatibility
 
 | Browser | Minimum Version |
@@ -391,8 +375,6 @@ Export downloads the transformed result. After export, the app can ask whether t
 | Mozilla Firefox | 113+ |
 
 Internet Explorer is not supported.
-
----
 
 ## Updating the Tool
 
